@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+  asciidoctor:
+    build: .
+    volumes:
+      - ./book:/documents
+      - ./output:/output # OUTPUT_DIR
+
+  nginx-proxy:
+    image: cethy/apline-nginx-livereload-injection:v1.0
+    ports:
+      - "8941:80"
+    volumes:
+      - "./output:/usr/share/nginx/html"
+
+  livereload:
+    image: cethy/alpine-livereload:v1.0
+    ports:
+      - "35729:35729"
+    volumes:
+      - ./output:/usr/src/livereload-watch # OUTPUT_DIR
+    command: "/usr/src/livereload-watch -u true -d --exts 'css,js,html'"
